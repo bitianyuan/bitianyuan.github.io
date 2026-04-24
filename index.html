@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>选择题扫码答题系统</title>
+    <!-- 全球稳定HTTPS CDN，GitHub Pages/国内均正常访问，无跨域问题 -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: "Microsoft YaHei", sans-serif;
+            font-family: "Microsoft YaHei", system-ui, sans-serif;
         }
 
         body {
@@ -71,6 +73,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .btn {
@@ -133,10 +137,6 @@
             .radio-group {gap: 10px;}
         }
     </style>
-    <!-- 内置完整QRCode库，彻底不依赖外部CDN -->
-    <script>
-!function(t){"use strict";var e=function(){};e.prototype={version:"1.5.1",errorCorrectLevel:{L:1,M:0,Q:3,H:2},Mode:{MODE_NUMBER:1,MODE_ALPHA_NUM:2,MODE_8BIT_BYTE:4,MODE_KANJI:8},MaskPattern:{PATTERN000:0,PATTERN001:1,PATTERN010:2,PATTERN011:3,PATTERN100:4,PATTERN101:5,PATTERN110:6,PATTERN111:7},QRCodeLimitLength:[[17,14,11,7],[32,26,20,14],[53,42,32,24],[78,62,46,34],[106,84,60,44],[134,106,74,58],[154,122,86,64],[192,152,108,84],[230,180,130,98],[271,213,151,119],[321,251,177,137],[367,287,203,155],[425,331,241,177],[458,362,258,194],[520,412,292,220],[586,450,322,250],[644,504,364,280],[718,560,394,310],[792,624,442,338],[858,666,482,382],[929,711,509,403],[1003,779,565,439],[1091,857,611,461],[1171,911,661,511],[1273,997,715,535],[1367,1059,751,593],[1465,1125,805,625],[1528,1190,868,658],[1628,1264,908,698],[1732,1370,982,742],[1840,1452,1030,790],[1952,1538,1112,842],[2068,1628,1168,898],[2188,1722,1228,958],[2303,1809,1283,983],[2431,1911,1351,1051],[2563,1989,1423,1093],[2699,2099,1499,1139],[2809,2213,1579,1219],[2953,2331,1663,1273],[3091,2453,1729,1327],[3231,2579,1817,1401],[3375,2707,1921,1461],[3523,2847,1993,1521],[3675,2983,2085,1585],[3831,3131,2181,1649],[3991,3283,2281,1721],[4155,3439,2385,1791],[4323,3599,2493,1867]],isCanvasSupported:function(){var t=document.createElement("canvas");return!!(t.getContext&&t.getContext("2d"))},stringToBytes:function(t){for(var e=[],r=0;r<t.length;r++){var n=t.charCodeAt(r);n<128?e.push(n):n<2048?(e.push(192|n>>6),e.push(128|63&n)):n<55296||n>=57344?(e.push(224|n>>12),e.push(128|n>>6&63),e.push(128|63&n)):(r++,n=65536+((1023&n)<<10|1023&t.charCodeAt(r)),e.push(240|n>>18),e.push(128|n>>12&63),e.push(128|n>>6&63),e.push(128|63&n))}return e},stringToBytesUTF16BE:function(t){for(var e=[],r=0;r<t.length;r++){var n=t.charCodeAt(r);e.push(n>>8),e.push(255&n)}return e},stringToBytesSJIS:function(t){if(!window.QRCodeSJISUtil)return console.warn("sjis not loaded"),this.stringToBytes(t);for(var e=[],r=0;r<t.length;r++){var n=window.QRCodeSJISUtil.toSJIS(t.charAt(r));if(!n)throw new Error("invalid sjis character: "+t.charAt(r));n<256?e.push(n):(e.push(n>>8),e.push(255&n))}return e},getUTF8Length:function(t){var e=0;for(var r=0;r<t.length;r++){var n=t.charCodeAt(r);n<128?e++:n<2048?e+=2:n<55296||n>=57344?e+=3:(r++,e+=4)}return e},getTypeNumber:function(t,e){for(var r=0,n=this.QRCodeLimitLength.length;r<n;r++){for(var o=0,i=this.QRCodeLimitLength[r].length;o<i;o++)if(e==o&&t<=this.QRCodeLimitLength[r][o])return r+1;throw new Error("Bad error correction level")}throw new Error("Too long data")},createStringToData:function(t,e){switch(t){case this.Mode.MODE_NUMBER:return new a(e);case this.Mode.MODE_ALPHA_NUM:return new o(e);case this.Mode.MODE_8BIT_BYTE:return new i(e);case this.Mode.MODE_KANJI:return new s(e);default:throw new Error("mode:"+t)}},getMode:function(t){if(this.isKanjiMode(t))return this.Mode.MODE_KANJI;if(this.isAlphaNum(t))return this.Mode.MODE_ALPHA_NUM;if(this.isNumber(t))return this.Mode.MODE_NUMBER;return this.Mode.MODE_8BIT_BYTE},isNumber:function(t){return/^[0-9]+$/.test(t)},isAlphaNum:function(t){return/^[A-Z0-9 $%*+\-./:]+$/.test(t)},isKanjiMode:function(t){if(!window.QRCodeSJISUtil)return!1;for(var e=0;e<t.length;e++){var r=window.QRCodeSJISUtil.toSJIS(t.charAt(e));if(!r||r<33088||r>40956)return!1}return!0},toAlphaNumCode:function(t){var e=t.charCodeAt(0);return e>=48&&e<=57?e-48:e>=65&&e<=90?e-65+10:{" ":36,"$":37,"%":38,"*":39,"+":40,"-":41,".":42,"/":43,":":44}[t]},getBestModeForData:function(t){return this.getMode(t)},createData:function(t,e){var r=this.getBestModeForData(t);return this.createStringToData(r,t,e)},createCanvas:function(){return document.createElement("canvas")},renderTo2dContext:function(t,e,r){r=r||{};var n=r.width||256,o=r.height||256,i=r.margin===void 0?4:r.margin,a=r.color||{},o=a.dark||"#000000",s=a.light||"#ffffff",d=e.moduleCount;if(i=Math.floor(i),d+2*i){var h=Math.min(o/d,n/d),l=Math.ceil(d*h),u=Math.ceil(i*h),f=(n-l)/2,g=(o-l)/2;t.clearRect(0,0,n,o),t.fillStyle=s,t.fillRect(0,0,n,o),t.fillStyle=o;for(var m=0;m<d;m++)for(var p=0;p<d;p++)e.isDark(m,p)&&t.fillRect(Math.floor(f+u+p*h),Math.floor(g+u+m*h),Math.ceil(h),Math.ceil(h))}}},t.QRCode=new e;var r=function(t,e){this.typeNumber=t,this.errorCorrectLevel=e,this.modules=null,this.moduleCount=0,this.dataCache=null,this.dataList=[]};r.prototype={addData:function(t,e){var r=t.QRCode.createData(t,e);this.dataList.push(r),this.dataCache=null},isDark:function(t,e){if(t<0||this.moduleCount<=t||e<0||this.moduleCount<=e)throw new Error(t+","+e);return this.modules[t][e]},getModuleCount:function(){return this.moduleCount},make:function(){this.makeImpl(!1,this.getBestMaskPattern())},makeImpl:function(t,e){this.moduleCount=4*this.typeNumber+17,this.modules=new Array(this.moduleCount);for(var r=0;r<this.moduleCount;r++){this.modules[r]=new Array(this.moduleCount);for(var n=0;n<this.moduleCount;n++)this.modules[r][n]=null}this.setupPositionProbePattern(0,0),this.setupPositionProbePattern(this.moduleCount-7,0),this.setupPositionProbePattern(0,this.moduleCount-7),this.setupPositionAdjustPattern(),this.setupTimingPattern(),this.setupTypeInfo(t,e),this.typeNumber>=7&&this.setupTypeNumber(t),null==this.dataCache&&(this.dataCache=this.createData(this.typeNumber,this.errorCorrectLevel,this.dataList)),this.mapData(this.dataCache,e)},setupPositionProbePattern:function(t,e){for(var r=-1;r<=7;r++)for(var n=-1;n<=7;n++)t+r<=-1||this.moduleCount<=t+r||e+n<=-1||this.moduleCount<=e+n||(r>=0&&r<=6&&(n==0||n==6)||n>=0&&n<=6&&(r==0||r==6)||r>=2&&r<=4&&n>=2&&n<=4?this.modules[t+r][e+n]=!0:this.modules[t+r][e+n]=!1)},getBestMaskPattern:function(){for(var t=0,e=0,r=0;r<8;r++){this.makeImpl(!0,r);var n=this.getLostPoint();if(r==0||t>n)t=n,e=r}return e},createMovieClip:function(t,e,r){var n=t.createEmptyMovieClip(e,r),o=1;this.make();for(var i=0;i<this.modules.length;i++)for(var a=0;a<this.modules[i].length;a++){var s=this.modules[i][a];s&&n.beginFill(0,100),n.moveTo(a*o,i*o),n.lineTo(a*o+o,i*o),n.lineTo(a*o+o,i*o+o),n.lineTo(a*o,i*o+o),n.endFill()}return n},setupTimingPattern:function(){for(var t=8;t<this.moduleCount-8;t++)null==this.modules[t][6]&&(this.modules[t][6]=0==t%2),null==this.modules[6][t]&&(this.modules[6][t]=0==t%2)},setupPositionAdjustPattern:function(){for(var t=this.getPositionAdjustPattern(),e=0;e<t.length;e++)for(var r=0;r<t.length;r++){var n=t[e],o=t[r];if(null==this.modules[n][o])for(var i=-2;i<=2;i++)for(var a=-2;a<=2;a++)i>=-2&&i<=2&&(a==-2||a==2)||a>=-2&&a<=2&&(i==-2||i==2)||i>=0&&i<=0&&a>=0&&a<=0?this.modules[n+i][o+a]=!0:this.modules[n+i][o+a]=!1}},setupTypeNumber:function(t){for(var e=this.getBCHTypeNumber(this.typeNumber),r=0;r<18;r++){var n=!t&&1==(e>>r&1);this.modules[Math.floor(r/3)][r%3+this.moduleCount-8-3]=n,this.modules[r%3+this.moduleCount-8-3][Math.floor(r/3)]=n}},setupTypeInfo:function(t,e){var r=this.errorCorrectLevel<<3|e,n=this.getBCHTypeInfo(r),o=21522;!t&&(n^=o);for(var i=0;i<15;i++){var a=!t&&1==(n>>i&1);i<6?this.modules[i][8]=a:i<8?this.modules[i+1][8]=a:this.modules[this.moduleCount-15+i][8]=a}for(var i=0;i<15;i++){var a=!t&&1==(n>>i&1);i<8?this.modules[8][this.moduleCount-i-1]=a:i<9?this.modules[8][15-i-1+1]=a:this.modules[8][15-i-1]=a}this.modules[this.moduleCount-8][8]=!t},mapData:function(t,e){for(var r=-1,n=this.moduleCount-1,o=7,i=0,a=this.moduleCount-1;a>0;a-=2)for(6==a&&a--;;){for(var s=0;s<2;s++)if(null==this.modules[n][a-s]){var d=!1;i<t.length&&(d=1==(t[i]>>>o&1));this.getMask(e,n,a-s)&&(d=!d),this.modules[n][a-s]=d,o--,o==-1&&(i++,o=7)}if(n+=r,0>n||this.moduleCount<=n){n-=r,r=-r;break}}},getMask:function(t,e,r){switch(t){case t.QRCode.MaskPattern.PATTERN000:return(e+r)%2==0;case t.QRCode.MaskPattern.PATTERN001:return e%2==0;case t.QRCode.MaskPattern.PATTERN010:return r%3==0;case t.QRCode.MaskPattern.PATTERN011:return(e+r)%3==0;case t.QRCode.MaskPattern.PATTERN100:return(Math.floor(e/2)+Math.floor(r/3))%2==0;case t.QRCode.MaskPattern.PATTERN101:return(e*r)%2+(e*r)%3==0;case t.QRCode.MaskPattern.PATTERN110:return((e*r)%2+(e*r)%3)%2==0;case t.QRCode.MaskPattern.PATTERN111:return((e*r)%3+(e+r)%2)%2==0;default:throw new Error("bad maskPattern:"+t)}},getLostPoint:function(){for(var t=this.moduleCount,e=0,r=0;r<t;r++)for(var n=0;n<t;n++){for(var o=0,i=this.isDark(r,n),a=-1;a<=1;a++)for(var s=-1;s<=1;s++)0!=a||0!=s?r+a>=0&&t>r+a&&n+s>=0&&t>n+s&&i==this.isDark(r+a,n+s)&&o++:void 0;o>5&&(e+=3+o-5)}for(var r=0;r<t-1;r++)for(var n=0;n<t-1;n++){var d=0;this.isDark(r,n)&&d++,this.isDark(r+1,n)&&d++,this.isDark(r,n+1)&&d++,this.isDark(r+1,n+1)&&d++;(0==d||4==d)&&(e+=3)}for(var r=0;r<t;r++)for(var n=0;n<t-6;n++)this.isDark(r,n)&&!this.isDark(r,n+1)&&this.isDark(r,n+2)&&this.isDark(r,n+3)&&this.isDark(r,n+4)&&!this.isDark(r,n+5)&&this.isDark(r,n+6)&&(e+=40);for(var n=0;n<t;n++)for(var r=0;r<t-6;r++)this.isDark(r,n)&&!this.isDark(r+1,n)&&this.isDark(r+2,n)&&this.isDark(r+3,n)&&this.isDark(r+4,n)&&!this.isDark(r+5,n)&&this.isDark(r+6,n)&&(e+=40);for(var o=0,r=0;r<t;r++)for(var n=0;n<t;n++)this.isDark(r,n)&&o++;return e+Math.abs(100*o/t/t-50)*10},getPositionAdjustPattern:function(){for(var t=this.typeNumber,e=[],r=4*t+17,n=7;if(t>1){for(var o=t%7+2,i=r-7,o=Math.ceil((i-7)/(2*o))*o+7;o>0;o-=2*n)e.unshift(o)}return e},getBCHTypeInfo:function(t){for(var e=t<<10;this.getBCHDigit(e)-this.getBCHDigit(1335)>=0;)e^=1335<<this.getBCHDigit(e)-this.getBCHDigit(1335);return(t<<10|e)^21522},getBCHTypeNumber:function(t){for(var e=t<<12;this.getBCHDigit(e)-this.getBCHDigit(7973)>=0;)e^=7973<<this.getBCHDigit(e)-this.getBCHDigit(7973);return t<<12|e},getBCHDigit:function(t){for(var e=0;0!=t;)e++,t>>>=1;return e},createData:function(t,e,r){for(var n=t.QRCodeLimitLength[t-1][e],o=[],i=0;i<r.length;i++){var a=r[i];o.push(a.getMode()),o.push(a.getLength(t)),a.write(o)}for(var s=o.length/8,d=0;d<r.length;d++)s+=r[d].getLength(t);if(s>n)throw new Error("code length overflow. ("+s+">"+n+")");for(o.push(0);o.length%8!=0;)o.push(0);for(;;){if(o.length>=n*8)break;o.push(236),o.length>=n*8&&break;o.push(17)}for(var h=this.createBytes(o,e,t),l=new r(t,e),u=l.rsBlockDataLength,f=0,g=0;f<h.length;f++){for(var m=0;m<h.length;m++)l.modules[m][f]=h[m][f]}return h},createBytes:function(t,e,r){var n=this.rsBlockNumbers[e][r-1],o=this.rsBlockMaxDataLength[e][r-1],i=this.rsBlockECLength[e][r-1],a=[],s=0,d=0;for(var h=0;h<n.length;h++){for(var l=o[h],u=new Array(l),f=0;f<l;f++)u[f]=255&t[8*(s+f)];s+=l;for(var g=this.createECBlocks(u,i[h]),m=new Array(l+i[h]),p=0;p<l;p++)m[p]=u[p];for(var p=0;p<i[h].length;p++)m[p+l]=g[p];a[d++]=m}for(var c=0,v=0;v<a[0].length;v++)for(var h=0;h<a.length;h++)v<a[h].length&&(t[c++]=a[h][v]);return t},rsBlockNumbers:[[1,0],[1,0],[1,0],[1,0],[1,0],[2,0],[2,0],[2,0],[2,0],[4,0],[4,0],[4,2],[4,2],[8,2],[8,2],[8,4],[8,4],[7,4],[7,4],[5,6],[5,6],[10,5],[10,5],[9,5],[9,5],[17,1],[17,1],[17,4],[17,4],[13,4],[13,4],[15,5],[15,5],[17,5],[17,5],[19,6],[19,6],[21,7],[21,7],[24,10],[24,10],[28,10],[28,10],[26,11],[26,11],[30,12],[30,12],[32,12],[32,12],[35,13],[35,13],[37,14],[37,14],[40,15],[40,15],[42,16],[42,16],[45,17],[45,17],[48,18],[48,18],[51,19],[51,19],[54,20],[54,20],[57,21],[57,21],[60,22],[60,22],[63,23],[63,23],[66,24],[66,24],[70,25],[70,25]],rsBlockMaxDataLength:[[19,0],[34,0],[55,0],[80,0],[108,0],[68,0],[78,0],[97,0],[116,0],[68,0],[81,0],[92,0],[107,0],[115,0],[134,0],[101,0],[122,0],[105,0],[131,0],[108,0],[120,0],[113,0],[107,0],[116,0],[111,0],[121,0],[117,0],[106,0],[114,0],[108,0],[116,0],[111,0],[110,0],[122,0],[117,0],[116,0],[115,0],[115,0],[115,0],[115,0],[115,0],[115,0],[115,0],[115,0],[115,0],[115,0],[115,0],[115,0]],rsBlockECLength:[[7,0],[10,0],[13,0],[15,0],[18,0],[20,0],[26,0],[18,0],[24,0],[16,0],[20,0],[24,0],[18,0],[24,0],[18,0],[28,0],[22,0],[26,0],[22,0],[26,0],[30,0],[22,0],[28,0],[26,0],[24,0],[30,0],[28,0],[24,0],[30,0],[28,0],[30,0],[30,0],[30,0],[30,0],[30,0],[30,0],[30,0],[30,0],[30,0],[30,0],[30,0],[30,0],[30,0],[30,0],[30,0],[30,0],[30,0],[30,0],[30,0]],createECBlocks:function(t,e){for(var r=this.gfExp(0),n=1,o=0;o<e;o++)r=this.gfMultiply(r,this.gfExp(o)),n=this.gfMultiply(n,this.gfExp(o));for(var i=new Array(e),a=0;a<e;a++)i[a]=0;for(var a=0;a<t.length;a++){for(var s=t[a]^i[e-1],d=e-1;d>0;d--)i[d]=i[d-1]^this.gfMultiply(s,r[d]);i[0]=this.gfMultiply(s,r[0])}return i.reverse()},gfExp:function(t){for(;t<0;)t+=255;for(;t>=256;)t-=255;return this.GF_EXP_TABLE[t]},gfLog:function(t){if(t<1)throw new Error("gfLog("+t+")");return this.GF_LOG_TABLE[t]},gfMultiply:function(t,e){return 0==t||0==e?0:this.gfExp(this.gfLog(t)+this.gfLog(e))},GF_EXP_TABLE:new Array(256),GF_LOG_TABLE:new Array(256)},t.QRCode.QRCodeModel=r;for(var n=0;n<8;n++)r.prototype.rsBlockNumbers[n][1]=r.prototype.rsBlockNumbers[n][0],r.prototype.rsBlockMaxDataLength[n][1]=r.prototype.rsBlockMaxDataLength[n][0],r.prototype.rsBlockECLength[n][1]=r.prototype.rsBlockECLength[n][0];for(var n=0;n<r.prototype.rsBlockNumbers.length;n++){for(var o=0;o<r.prototype.rsBlockNumbers[n].length;o++){r.prototype.rsBlockNumbers[n][o]=r.prototype.rsBlockNumbers[n][o]||0;var i=r.prototype.rsBlockNumbers[n][o];r.prototype.rsBlockMaxDataLength[n][o]=r.prototype.rsBlockMaxDataLength[n][o]||0;var a=r.prototype.rsBlockMaxDataLength[n][o];r.prototype.rsBlockECLength[n][o]=r.prototype.rsBlockECLength[n][o]||0;var s=r.prototype.rsBlockECLength[n][o];if(i){for(var d=0;d<i;d++){r.prototype.rsBlockNumbers.unshift([1]),r.prototype.rsBlockMaxDataLength.unshift([a]),r.prototype.rsBlockECLength.unshift([s])}}}}for(var n=0;n<256;n++)r.prototype.GF_EXP_TABLE[n]=n<8?1<<n:284*(r.prototype.GF_EXP_TABLE[n-4]^r.prototype.GF_EXP_TABLE[n-5]^r.prototype.GF_EXP_TABLE[n-6]^r.prototype.GF_EXP_TABLE[n-8])&255,r.prototype.GF_LOG_TABLE[r.prototype.GF_EXP_TABLE[n]]=n;var o=function(t){this.mode=t.QRCode.Mode.MODE_NUMBER,this.data=t},i=function(t){this.mode=t.QRCode.Mode.MODE_8BIT_BYTE,this.data=t},a=function(t){this.mode=t.QRCode.Mode.MODE_ALPHA_NUM,this.data=t},s=function(t){this.mode=t.QRCode.Mode.MODE_KANJI,this.data=t};o.prototype={getLength:function(t){return this.data.length},write:function(t){for(var e=this.data,r=e.length,n=0;n<r;n+=3){var o=Math.min(r-n,3),i=parseInt(e.substr(n,o),10),a=3*o-1;t.push(i>>>a&255),a-=8;for(;a>=0;)t.push(i>>>a&255),a-=8}}},a.prototype={getLength:function(t){return this.data.length},write:function(t){for(var e=this.data,r=e.length,n=0;n<r;n+=2){var o=Math.min(r-n,2),i=0;2==o?(i=45*this.getCode(e.charAt(n))+this.getCode(e.charAt(n+1)),t.push(i>>>8&255),t.push(255&i)):(i=this.getCode(e.charAt(n)),t.push(255&i))}},getCode:function(t){var e=t.QRCode.toAlphaNumCode(t);if(void 0===e)throw new Error("illegal char :"+t);return e}},i.prototype={getLength:function(t){return t.QRCode.getUTF8Length(this.data)},write:function(t){var e=t.QRCode.stringToBytes(this.data);for(var r=0;r<e.length;r++)t.push(e[r])}},s.prototype={getLength:function(t){return Math.floor(this.data.length*2)},write:function(t){for(var e=t.QRCode.stringToBytesSJIS(this.data),r=0;r<e.length;r+=2){var n=(e[r]<<8)|e[r+1];t.push(n>>>8&255),t.push(255&n)}}},d=function(t,e){if(this._el=t,this._htOption=e={width:e.width||256,height:e.height||256,typeNumber:e.typeNumber||-1,color:e.color||{},correctLevel:e.correctLevel||t.QRCode.errorCorrectLevel.M},this._htOption.color.dark=this._htOption.color.dark||"#000000",this._htOption.color.light=this._htOption.color.light||"#ffffff",this._android=navigator.userAgent.toLowerCase().indexOf("android")>-1,this._oQRCode=null,"string"==typeof t&&(t=document.getElementById(t)),!t)throw new Error("element not found");this._el=t,this._canvas=document.createElement("canvas"),this._canvas.width=this._htOption.width,this._canvas.height=this._htOption.height,this._el.appendChild(this._canvas),e.text&&this.makeCode(e.text)};d.prototype={makeCode:function(t){var e=this._htOption,r=t.QRCode.getTypeNumber(t,e.correctLevel),n=new t.QRCode.QRCodeModel(r,e.correctLevel);n.addData(t),n.make(),this._oQRCode=n,this.render()},render:function(){var t=this._canvas.getContext("2d"),e=this._htOption;t.clearRect(0,0,e.width,e.height),t.QRCode.renderTo2dContext(t,this._oQRCode,e)},clear:function(){var t=this._canvas.getContext("2d");t.clearRect(0,0,this._htOption.width,this._htOption.height),this._el.innerHTML=""}},t.QRCode.Canvas=d;var h=function(t,e){if(this._android=navigator.userAgent.toLowerCase().indexOf("android")>-1,this._el=t,this._htOption=e={width:e.width||256,height:e.height||256,typeNumber:e.typeNumber||-1,color:e.color||{},correctLevel:e.correctLevel||t.QRCode.errorCorrectLevel.M},this._htOption.color.dark=this._htOption.color.dark||"#000000",this._htOption.color.light=this._htOption.color.light||"#ffffff","string"==typeof t&&(t=document.getElementById(t)),!t)throw new Error("element not found");this._el=t,e.text&&this.makeCode(e.text)};h.prototype={makeCode:function(t){var e=this._htOption,r=t.QRCode.getTypeNumber(t,e.correctLevel),n=new t.QRCode.QRCodeModel(r,e.correctLevel);n.addData(t),n.make(),this._oQRCode=n,this.render()},render:function(){for(var t=this._htOption,e=t.width,r=t.height,n=t.color.dark,o=t.color.light,i=this._oQRCode.getModuleCount(),a=Math.floor(e/i),s=Math.floor(r/i),d=this._el,h="",l=0;l<i;l++){for(var u=0;u<i;u++){var f=i==u||0==u||i==l||0==l,g=i-7==u||0==u||i-7==l||0==l,m=i-7==u||0==u||i-7==l||0==l,p=this._oQRCode.isDark(l,u);h+='<span style="border:0; margin:0; padding:0; left:'+u*a+"px; top:"+l*s+"px; width:"+a+"px; height:"+s+"px; background-color:"+(p?n:o)+"; position:absolute; display:block; "+(this._android&&p?"border-right:1px solid "+n+"; border-bottom:1px solid "+n:"")+'"></span>'}}d.innerHTML='<div style="position:relative; left:0; top:0;">'+h+"</div>"},clear:function(){this._el.innerHTML=""}},t.QRCode.DrawTable=h}(window),function(t,e){"use strict";"function"==typeof define&&define.amd?define([],function(){return e(t)}):"object"==typeof exports?module.exports=e(t):t.QRCode=e(t)}(window,function(t){"use strict";var e=function(e,r){if(r=r||{},this._options={width:r.width||256,height:r.height||256,typeNumber:r.typeNumber||-1,color:{dark:r.color&&r.color.dark?r.color.dark:"#000000",light:r.color&&r.color.light?r.color.light:"#ffffff"},correctLevel:r.correctLevel||QRCode.CorrectLevel.H},this._isCanvasSupported=document.createElement("canvas").getContext&&document.createElement("canvas").getContext("2d"),this._htOption=this._options,this._android=navigator.userAgent.toLowerCase().indexOf("android")>-1,"string"==typeof e&&(e=document.getElementById(e)),!e)throw new Error("element not found");
-    </script>
 </head>
 <body>
     <div class="container">
@@ -147,11 +147,11 @@
         <div id="maker-mode">
             <div id="question-list"></div>
             <button class="btn btn-primary" onclick="addQuestion()">+ 添加新题目</button>
-            <button class="btn btn-success" onclick="generateQRCode()">生成答题二维码</button>
+            <button class="btn btn-success" id="generate-btn" onclick="generateQRCode()">生成答题二维码</button>
             <div class="qrcode-box" id="qrcode-box">
                 <h3>扫码答题</h3>
                 <div id="qrcode"></div>
-                <p>微信/浏览器扫码均可作答</p>
+                <p style="margin-top: 10px; color: #666;">微信/浏览器/QQ扫码均可打开作答</p>
             </div>
         </div>
 
@@ -160,223 +160,328 @@
             <div id="exam-question-list"></div>
             <button class="btn btn-success" id="submit-btn" onclick="submitExam()">提交答案</button>
             <div id="result-box" class="result-box">
-                <p>本次得分</p>
+                <p class="result-desc">本次答题得分</p>
                 <div class="result-score" id="result-score">0</div>
-                <p>共 <span id="total-count">0</span> 题，答对 <span id="correct-count">0</span> 题</p>
+                <p class="result-desc">共 <span id="total-count">0</span> 题，答对 <span id="correct-count">0</span> 题</p>
             </div>
         </div>
     </div>
 
     <script>
         // 全局题目数据
-        let questionList = [{
-            stem: "1+1等于几？",
-            options: ["1", "2", "3", "4"],
-            correct: 1
-        }];
+        let questionList = [
+            {
+                stem: "1+1等于几？",
+                options: ["1", "2", "3", "4"],
+                correct: 1
+            }
+        ];
         let examQuestions = [], userAnswers = {};
 
-        // 页面加载自动判断模式
+        // 页面加载初始化
         window.onload = function() {
-            const hash = window.location.hash.slice(1);
-            if(hash){
-                try{
-                    // 修复：先atob，再decodeURIComponent
-                    examQuestions = JSON.parse(decodeURIComponent(atob(hash)));
-                    initExam();
-                }catch(e){
-                    showTips("链接无效，请重新生成二维码", "error");
-                    showMaker();
-                }
-            }else{
-                showMaker();
-                renderQuestions();
+            // 提前校验二维码库是否加载成功
+            if (typeof QRCode === 'undefined') {
+                showTips("二维码库加载失败，请刷新页面重试", "error");
+                document.getElementById("generate-btn").disabled = true;
+            } else {
+                showTips("系统加载成功，可开始编辑题目", "success");
             }
+
+            // 判断是出题模式还是答题模式
+            const hash = window.location.hash.slice(1);
+            if (hash) {
+                try {
+                    // 修复中文解码逻辑，和编码一一对应
+                    examQuestions = JSON.parse(decodeURIComponent(atob(hash)));
+                    initExamMode();
+                } catch (e) {
+                    console.error("解析失败：", e);
+                    showTips("无效的答题链接，请重新生成二维码", "error");
+                    showMakerMode();
+                }
+            } else {
+                showMakerMode();
+                renderQuestionList();
+            }
+        };
+
+        // 全局提示函数
+        function showTips(message, type) {
+            const tipsBox = document.getElementById("tips-box");
+            tipsBox.innerText = message;
+            tipsBox.className = "tips-box tips-" + type;
+            // 3秒后自动隐藏
+            setTimeout(function() {
+                tipsBox.className = "tips-box";
+            }, 3500);
         }
 
-        // 显示提示
-        function showTips(msg, type){
-            const box = document.getElementById("tips-box");
-            box.innerText = msg;
-            box.className = "tips-box tips-" + type;
-            setTimeout(function(){ box.className = "tips-box"; }, 3000);
+        // 模式切换
+        function showMakerMode() {
+            document.getElementById("maker-mode").style.display = "block";
+            document.getElementById("exam-mode").style.display = "none";
+        }
+        function showExamMode() {
+            document.getElementById("maker-mode").style.display = "none";
+            document.getElementById("exam-mode").style.display = "block";
         }
 
-        // 切换模式
-        function showMaker(){
-            document.getElementById("maker-mode").style.display="block";
-            document.getElementById("exam-mode").style.display="none";
-        }
-        function showExam(){
-            document.getElementById("maker-mode").style.display="none";
-            document.getElementById("exam-mode").style.display="block";
-        }
+        // ========== 出题核心功能 ==========
+        // 渲染题目列表
+        function renderQuestionList() {
+            const container = document.getElementById("question-list");
+            container.innerHTML = "";
 
-        // ========== 出题功能 ==========
-        function renderQuestions(){
-            const dom = document.getElementById("question-list");
-            dom.innerHTML = questionList.map(function(q, i){
-                return `
-                <div class="question-card">
+            questionList.forEach(function(question, index) {
+                const questionCard = document.createElement("div");
+                questionCard.className = "question-card";
+                questionCard.innerHTML = `
                     <div class="question-header">
-                        <span>第${i+1}题</span>
-                        <button class="btn btn-danger" onclick="delQ(${i})">删除</button>
+                        <span class="question-title">第 ${index + 1} 题</span>
+                        <button class="btn btn-danger" onclick="deleteQuestion(${index})">删除题目</button>
                     </div>
                     <div class="form-item">
-                        <label class="form-label">题干</label>
-                        <input class="form-input" value="${q.stem.replace(/"/g, '&quot;')}" oninput="questionList[${i}].stem=this.value">
+                        <label class="form-label">题目题干</label>
+                        <input 
+                            type="text" 
+                            class="form-input" 
+                            placeholder="请输入题目内容" 
+                            value="${question.stem.replace(/"/g, '&quot;')}"
+                            oninput="updateQuestionStem(${index}, this.value)"
+                        >
                     </div>
                     <div class="form-item">
-                        <label class="form-label">选项</label>
-                        ${q.options.map(function(opt, j){
-                            return `
-                            <div class="option-item">
-                                <span>${String.fromCharCode(65+j)}.</span>
-                                <input class="form-input" value="${opt.replace(/"/g, '&quot;')}" oninput="questionList[${i}].options[${j}]=this.value">
-                                <button class="btn btn-danger" onclick="delOpt(${i},${j})">删</button>
-                            </div>
-                            `;
-                        }).join('')}
-                        <button class="btn btn-secondary" onclick="addOpt(${i})">+添加选项</button>
+                        <label class="form-label">题目选项</label>
+                        <div class="option-list">
+                            ${question.options.map(function(option, optIndex) {
+                                return `
+                                    <div class="option-item">
+                                        <span>${String.fromCharCode(65 + optIndex)}.</span>
+                                        <input 
+                                            type="text" 
+                                            class="form-input" 
+                                            placeholder="请输入选项内容" 
+                                            value="${option.replace(/"/g, '&quot;')}"
+                                            oninput="updateQuestionOption(${index}, ${optIndex}, this.value)"
+                                        >
+                                        <button class="btn btn-danger" onclick="deleteOption(${index}, ${optIndex})">删除</button>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                        <button class="btn btn-secondary" onclick="addOption(${index})">+ 添加选项</button>
                     </div>
                     <div class="form-item">
                         <label class="form-label">正确答案</label>
                         <div class="radio-group">
-                            ${q.options.map(function(_, j){
+                            ${question.options.map(function(_, optIndex) {
                                 return `
-                                <label class="radio-item">
-                                    <input type="radio" name="c${i}" ${q.correct==j?'checked':''} onchange="questionList[${i}].correct=${j}">
-                                    ${String.fromCharCode(65+j)}
-                                </label>
+                                    <label class="radio-item">
+                                        <input 
+                                            type="radio" 
+                                            name="correct-${index}" 
+                                            value="${optIndex}"
+                                            ${question.correct === optIndex ? 'checked' : ''}
+                                            onchange="updateCorrectAnswer(${index}, ${optIndex})"
+                                        >
+                                        ${String.fromCharCode(65 + optIndex)}
+                                    </label>
                                 `;
                             }).join('')}
                         </div>
                     </div>
-                </div>
                 `;
-            }).join('');
+                container.appendChild(questionCard);
+            });
         }
 
-        function addQ(){
-            questionList.push({stem:"", options:["","","",""], correct:0});
-            renderQuestions();
+        // 题目操作函数
+        function addQuestion() {
+            questionList.push({
+                stem: "",
+                options: ["", "", "", ""],
+                correct: 0
+            });
+            renderQuestionList();
         }
-        function delQ(i){
-            if(questionList.length>1) questionList.splice(i,1);
-            renderQuestions();
+        function deleteQuestion(index) {
+            if (questionList.length <= 1) {
+                showTips("至少保留1道题目", "error");
+                return;
+            }
+            questionList.splice(index, 1);
+            renderQuestionList();
         }
-        function addOpt(i){
-            if(questionList[i].options.length<8) questionList[i].options.push("");
-            renderQuestions();
+        function updateQuestionStem(index, value) {
+            questionList[index].stem = value;
         }
-        function delOpt(i,j){
-            if(questionList[i].options.length>2) questionList[i].options.splice(j,1);
-            renderQuestions();
+        function updateQuestionOption(questionIndex, optIndex, value) {
+            questionList[questionIndex].options[optIndex] = value;
+        }
+        function addOption(questionIndex) {
+            const options = questionList[questionIndex].options;
+            if (options.length >= 8) {
+                showTips("单题最多支持8个选项", "error");
+                return;
+            }
+            options.push("");
+            renderQuestionList();
+        }
+        function deleteOption(questionIndex, optIndex) {
+            const options = questionList[questionIndex].options;
+            if (options.length <= 2) {
+                showTips("单题至少保留2个选项", "error");
+                return;
+            }
+            options.splice(optIndex, 1);
+            // 修正正确答案索引
+            const correctIndex = questionList[questionIndex].correct;
+            if (correctIndex === optIndex) {
+                questionList[questionIndex].correct = 0;
+            } else if (correctIndex > optIndex) {
+                questionList[questionIndex].correct -= 1;
+            }
+            renderQuestionList();
+        }
+        function updateCorrectAnswer(questionIndex, optIndex) {
+            questionList[questionIndex].correct = optIndex;
         }
 
-        // 生成二维码（核心修复：中文编码处理）
-        function generateQRCode(){
-            // 校验题目
-            for(let i=0; i<questionList.length; i++){
-                const q = questionList[i];
-                if(!q.stem.trim()){
-                    showTips(`第${i+1}题的题干不能为空`, "error");
+        // 生成二维码（核心修复：适配GitHub Pages路径）
+        function generateQRCode() {
+            // 1. 校验题目完整性
+            for (let i = 0; i < questionList.length; i++) {
+                const question = questionList[i];
+                if (!question.stem.trim()) {
+                    showTips(`第 ${i + 1} 题的题干不能为空`, "error");
                     return;
                 }
-                for(let j=0; j<q.options.length; j++){
-                    if(!q.options[j].trim()){
-                        showTips(`第${i+1}题的选项${String.fromCharCode(65+j)}不能为空`, "error");
+                for (let j = 0; j < question.options.length; j++) {
+                    if (!question.options[j].trim()) {
+                        showTips(`第 ${i + 1} 题的选项 ${String.fromCharCode(65 + j)} 不能为空`, "error");
                         return;
                     }
                 }
             }
-            
-            // 修复：先JSON.stringify，再encodeURIComponent，最后btoa
-            const jsonStr = JSON.stringify(questionList);
-            const safeStr = encodeURIComponent(jsonStr);
-            const data = btoa(safeStr);
-            const url = window.location.origin + window.location.pathname + '#' + data;
-            
-            // 显示二维码
-            document.getElementById("qrcode-box").style.display="block";
-            document.getElementById("qrcode").innerHTML = "";
-            
-            // 生成二维码
-            if(typeof QRCode !== 'undefined'){
-                QRCode.toCanvas(document.getElementById("qrcode"), url, {width:250}, function (error) {
-                    if (error) {
-                        console.error(error);
-                        showTips("二维码生成失败，请刷新重试", "error");
-                    } else {
-                        showTips("二维码生成成功！", "success");
-                    }
-                });
-            } else {
-                showTips("二维码库加载失败，请检查网络或使用本地HTTP服务器打开", "error");
-            }
+
+            // 2. 修复中文编码问题，彻底解决btoa报错
+            const jsonString = JSON.stringify(questionList);
+            const urlSafeString = encodeURIComponent(jsonString);
+            const base64Data = btoa(urlSafeString);
+
+            // 3. 核心修复：适配GitHub Pages路径，兼容根域名/子路径
+            // 自动获取当前页面的完整基础地址，避免仓库名带来的路径错误
+            const baseUrl = window.location.origin + window.location.pathname;
+            const examUrl = baseUrl + '#' + base64Data;
+
+            // 4. 生成二维码
+            const qrcodeBox = document.getElementById("qrcode-box");
+            const qrcodeContainer = document.getElementById("qrcode");
+            qrcodeBox.style.display = "block";
+            qrcodeContainer.innerHTML = "";
+
+            QRCode.toCanvas(qrcodeContainer, examUrl, {
+                width: 260,
+                margin: 1,
+                errorCorrectionLevel: 'M'
+            }, function (error) {
+                if (error) {
+                    console.error("二维码生成失败：", error);
+                    showTips("二维码生成失败，请刷新页面重试", "error");
+                } else {
+                    showTips("二维码生成成功！可扫码作答", "success");
+                }
+            });
         }
 
-        // ========== 答题功能 ==========
-        function initExam(){
-            showExam();
-            const dom = document.getElementById("exam-question-list");
-            dom.innerHTML = examQuestions.map(function(q, i){
-                return `
-                <div class="exam-question">
-                    <div class="exam-question-stem">${i+1}. ${q.stem}</div>
-                    ${q.options.map(function(opt, j){
-                        return `
-                        <div class="exam-option" id="q${i}o${j}" onclick="choose(${i},${j})">
-                            ${String.fromCharCode(65+j)}. ${opt}
-                        </div>
-                        `;
-                    }).join('')}
-                    <div class="answer-tips" id="answer-tips-${i}" style="display: none;"></div>
-                </div>
+        // ========== 答题核心功能 ==========
+        // 初始化答题页面
+        function initExamMode() {
+            showExamMode();
+            const container = document.getElementById("exam-question-list");
+            container.innerHTML = "";
+
+            examQuestions.forEach(function(question, index) {
+                const questionItem = document.createElement("div");
+                questionItem.className = "exam-question";
+                questionItem.id = `exam-question-${index}`;
+                questionItem.innerHTML = `
+                    <div class="exam-question-stem">${index + 1}. ${question.stem}</div>
+                    <div class="exam-option-list">
+                        ${question.options.map(function(option, optIndex) {
+                            return `
+                                <div 
+                                    class="exam-option" 
+                                    id="option-${index}-${optIndex}"
+                                    onclick="selectOption(${index}, ${optIndex})"
+                                >
+                                    ${String.fromCharCode(65 + optIndex)}. ${option}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    <div class="answer-tips" id="answer-tips-${index}" style="display: none;"></div>
                 `;
-            }).join('');
+                container.appendChild(questionItem);
+            });
         }
 
-        function choose(i,j){
-            const options = document.querySelectorAll(`#q${i}o\\d+`);
-            options.forEach(function(o){ o.classList.remove("selected"); });
-            document.getElementById(`q${i}o${j}`).classList.add("selected");
-            userAnswers[i]=j;
+        // 选择选项
+        function selectOption(questionIndex, optIndex) {
+            // 清除同题选中状态
+            const options = document.querySelectorAll(`#exam-question-${questionIndex} .exam-option`);
+            options.forEach(function(opt) {
+                opt.classList.remove("selected");
+            });
+            // 选中当前选项
+            document.getElementById(`option-${questionIndex}-${optIndex}`).classList.add("selected");
+            // 记录用户答案
+            userAnswers[questionIndex] = optIndex;
         }
 
-        function submitExam(){
-            if(Object.keys(userAnswers).length !== examQuestions.length){
-                showTips("请完成所有题目后再提交", "error");
+        // 提交答卷&自动判分
+        function submitExam() {
+            // 校验是否全部作答
+            if (Object.keys(userAnswers).length !== examQuestions.length) {
+                showTips(`还有 ${examQuestions.length - Object.keys(userAnswers).length} 道题未作答`, "error");
                 return;
             }
-            
+
             let correctCount = 0;
-            examQuestions.forEach(function(q, i){
-                const tipsDom = document.getElementById(`answer-tips-${i}`);
-                if(userAnswers[i] === q.correct){
+            examQuestions.forEach(function(question, index) {
+                const userAnswer = userAnswers[index];
+                const correctAnswer = question.correct;
+                const tipsDom = document.getElementById(`answer-tips-${index}`);
+
+                // 标记正确/错误选项
+                if (userAnswer === correctAnswer) {
                     correctCount++;
-                    document.getElementById(`q${i}o${q.correct}`).classList.add("correct");
+                    document.getElementById(`option-${index}-${correctAnswer}`).classList.add("correct");
                     tipsDom.className = "answer-tips tips-correct";
                     tipsDom.innerText = "✅ 回答正确";
                 } else {
-                    document.getElementById(`q${i}o${userAnswers[i]}`).classList.add("wrong");
-                    document.getElementById(`q${i}o${q.correct}`).classList.add("correct");
+                    document.getElementById(`option-${index}-${userAnswer}`).classList.add("wrong");
+                    document.getElementById(`option-${index}-${correctAnswer}`).classList.add("correct");
                     tipsDom.className = "answer-tips tips-wrong";
-                    tipsDom.innerText = `❌ 回答错误，正确答案：${String.fromCharCode(65+q.correct)}`;
+                    tipsDom.innerText = `❌ 回答错误，正确答案：${String.fromCharCode(65 + correctAnswer)}`;
                 }
                 tipsDom.style.display = "block";
             });
 
-            // 显示结果
-            document.getElementById("result-score").innerText = Math.round(correctCount / examQuestions.length * 100);
-            document.getElementById("total-count").innerText = examQuestions.length;
+            // 显示最终结果
+            const totalCount = examQuestions.length;
+            const score = Math.round((correctCount / totalCount) * 100);
+            document.getElementById("result-score").innerText = score;
+            document.getElementById("total-count").innerText = totalCount;
             document.getElementById("correct-count").innerText = correctCount;
             document.getElementById("result-box").style.display = "block";
-            document.getElementById("submit-btn").style.display = "none";
 
-            // 禁止再次选择
+            // 隐藏提交按钮，禁止重复提交
+            document.getElementById("submit-btn").style.display = "none";
+            // 禁止再次修改选项
             const allOptions = document.querySelectorAll(".exam-option");
-            allOptions.forEach(function(opt){
+            allOptions.forEach(function(opt) {
                 opt.style.pointerEvents = "none";
             });
         }
