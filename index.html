@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>选择题扫码答题系统</title>
-    <!-- 全球稳定HTTPS CDN，GitHub Pages/国内均正常访问，无跨域问题 -->
+    <!-- 全球稳定HTTPS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
     <style>
         * {
@@ -180,7 +180,6 @@
 
         // 页面加载初始化
         window.onload = function() {
-            // 提前校验二维码库是否加载成功
             if (typeof QRCode === 'undefined') {
                 showTips("二维码库加载失败，请刷新页面重试", "error");
                 document.getElementById("generate-btn").disabled = true;
@@ -188,11 +187,9 @@
                 showTips("系统加载成功，可开始编辑题目", "success");
             }
 
-            // 判断是出题模式还是答题模式
             const hash = window.location.hash.slice(1);
             if (hash) {
                 try {
-                    // 修复中文解码逻辑，和编码一一对应
                     examQuestions = JSON.parse(decodeURIComponent(atob(hash)));
                     initExamMode();
                 } catch (e) {
@@ -206,18 +203,15 @@
             }
         };
 
-        // 全局提示函数
         function showTips(message, type) {
             const tipsBox = document.getElementById("tips-box");
             tipsBox.innerText = message;
             tipsBox.className = "tips-box tips-" + type;
-            // 3秒后自动隐藏
             setTimeout(function() {
                 tipsBox.className = "tips-box";
             }, 3500);
         }
 
-        // 模式切换
         function showMakerMode() {
             document.getElementById("maker-mode").style.display = "block";
             document.getElementById("exam-mode").style.display = "none";
@@ -228,7 +222,6 @@
         }
 
         // ========== 出题核心功能 ==========
-        // 渲染题目列表
         function renderQuestionList() {
             const container = document.getElementById("question-list");
             container.innerHTML = "";
@@ -296,7 +289,6 @@
             });
         }
 
-        // 题目操作函数
         function addQuestion() {
             questionList.push({
                 stem: "",
@@ -335,7 +327,6 @@
                 return;
             }
             options.splice(optIndex, 1);
-            // 修正正确答案索引
             const correctIndex = questionList[questionIndex].correct;
             if (correctIndex === optIndex) {
                 questionList[questionIndex].correct = 0;
@@ -348,9 +339,9 @@
             questionList[questionIndex].correct = optIndex;
         }
 
-        // 生成二维码（核心修复：适配GitHub Pages路径）
+        // ========== 核心修复：二维码生成函数 ==========
         function generateQRCode() {
-            // 1. 校验题目完整性
+            // 1. 校验题目
             for (let i = 0; i < questionList.length; i++) {
                 const question = questionList[i];
                 if (!question.stem.trim()) {
@@ -365,23 +356,29 @@
                 }
             }
 
-            // 2. 修复中文编码问题，彻底解决btoa报错
+            // 2. 编码题目数据
             const jsonString = JSON.stringify(questionList);
             const urlSafeString = encodeURIComponent(jsonString);
             const base64Data = btoa(urlSafeString);
 
-            // 3. 核心修复：适配GitHub Pages路径，兼容根域名/子路径
-            // 自动获取当前页面的完整基础地址，避免仓库名带来的路径错误
+            // 3. 生成答题链接（适配GitHub Pages）
             const baseUrl = window.location.origin + window.location.pathname;
             const examUrl = baseUrl + '#' + base64Data;
 
-            // 4. 生成二维码
+            // 4. 核心修复：手动创建Canvas元素
             const qrcodeBox = document.getElementById("qrcode-box");
             const qrcodeContainer = document.getElementById("qrcode");
             qrcodeBox.style.display = "block";
-            qrcodeContainer.innerHTML = "";
+            qrcodeContainer.innerHTML = ""; // 清空容器
 
-            QRCode.toCanvas(qrcodeContainer, examUrl, {
+            // 手动创建一个 <canvas> 元素
+            const canvas = document.createElement("canvas");
+            canvas.style.display = "block";
+            canvas.style.margin = "0 auto";
+            qrcodeContainer.appendChild(canvas);
+
+            // 5. 把 canvas 传给 qrcode.js，而不是 div
+            QRCode.toCanvas(canvas, examUrl, {
                 width: 260,
                 margin: 1,
                 errorCorrectionLevel: 'M'
@@ -396,7 +393,6 @@
         }
 
         // ========== 答题核心功能 ==========
-        // 初始化答题页面
         function initExamMode() {
             showExamMode();
             const container = document.getElementById("exam-question-list");
@@ -427,22 +423,16 @@
             });
         }
 
-        // 选择选项
         function selectOption(questionIndex, optIndex) {
-            // 清除同题选中状态
             const options = document.querySelectorAll(`#exam-question-${questionIndex} .exam-option`);
             options.forEach(function(opt) {
                 opt.classList.remove("selected");
             });
-            // 选中当前选项
             document.getElementById(`option-${questionIndex}-${optIndex}`).classList.add("selected");
-            // 记录用户答案
             userAnswers[questionIndex] = optIndex;
         }
 
-        // 提交答卷&自动判分
         function submitExam() {
-            // 校验是否全部作答
             if (Object.keys(userAnswers).length !== examQuestions.length) {
                 showTips(`还有 ${examQuestions.length - Object.keys(userAnswers).length} 道题未作答`, "error");
                 return;
@@ -454,7 +444,6 @@
                 const correctAnswer = question.correct;
                 const tipsDom = document.getElementById(`answer-tips-${index}`);
 
-                // 标记正确/错误选项
                 if (userAnswer === correctAnswer) {
                     correctCount++;
                     document.getElementById(`option-${index}-${correctAnswer}`).classList.add("correct");
@@ -469,17 +458,14 @@
                 tipsDom.style.display = "block";
             });
 
-            // 显示最终结果
             const totalCount = examQuestions.length;
             const score = Math.round((correctCount / totalCount) * 100);
             document.getElementById("result-score").innerText = score;
             document.getElementById("total-count").innerText = totalCount;
             document.getElementById("correct-count").innerText = correctCount;
             document.getElementById("result-box").style.display = "block";
-
-            // 隐藏提交按钮，禁止重复提交
             document.getElementById("submit-btn").style.display = "none";
-            // 禁止再次修改选项
+
             const allOptions = document.querySelectorAll(".exam-option");
             allOptions.forEach(function(opt) {
                 opt.style.pointerEvents = "none";
