@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>选择题扫码答题系统</title>
+    <!-- 修复CDN，确保二维码库稳定加载 -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/qrcode/1.5.1/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        #maker-mode {display: block;}
+        #exam-mode {display: none;}
+
+        .question-card {
+            border: 1px solid #e0e6ed;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #fafbfc;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .btn-danger {background-color: #f56c6c;color: #fff;}
+        .btn-primary {background-color: #409eff;color: #fff;width: 100%;padding: 12px;font-size: 16px;margin-bottom: 15px;}
+        .btn-success {background-color: #67c23a;color: #fff;width: 100%;padding: 12px;font-size: 16px;margin-bottom: 20px;}
+        .btn-secondary {background-color: #909399;color: #fff;margin-top: 10px;}
+
+        .form-item {margin-bottom: 15px;}
+        .form-label {display: block;margin-bottom: 6px;color: #606266;font-size: 14px;}
+        .form-input {width: 100%;padding: 10px 12px;border: 1px solid #dcdfe6;border-radius: 6px;font-size: 14px;outline: none;}
+        .option-item {display: flex;align-items: center;gap: 10px;margin-bottom: 10px;}
+        .option-item .form-input {flex: 1;}
+
+        .radio-group {display: flex;gap: 20px;flex-wrap: wrap;margin-top: 8px;}
+        .radio-item {display: flex;align-items: center;gap: 5px;}
+
+        /* 二维码区域优化 */
+        .qrcode-box {
+            text-align: center;
+            padding: 20px;
+            border: 2px solid #409eff;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+        #qrcode {margin: 0 auto;}
+
+        .exam-question {margin-bottom: 25px;padding-bottom: 20px;border-bottom: 1px solid #e0e6ed;}
+        .exam-option {padding: 10px 12px;border: 1px solid #dcdfe6;border-radius: 6px;margin-bottom: 10px;cursor: pointer;}
+        .exam-option.selected {border-color: #409eff;background-color: #ecf5ff;}
+        .exam-option.correct {border-color: #67c23a;background-color: #f0f9eb;}
+        .exam-option.wrong {border-color: #f56c6c;background-color: #fef0f0;}
+
+        .result-box {text-align: center;padding: 30px;border-radius: 8px;margin-top: 20px;background-color: #f0f9ff;display: none;}
+        .result-score {font-size: 48px;font-weight: 700;color: #409eff;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>选择题扫码答题系统</h1>
+
+        <!-- 出题模式 -->
+        <div id="maker-mode">
+            <div id="question-list"></div>
+            <button class="btn btn-primary" onclick="addQuestion()">+ 添加新题目</button>
+            <button class="btn btn-success" onclick="generateQRCode()">生成答题二维码</button>
+            <div class="qrcode-box" id="qrcode-box">
+                <h3>扫码答题</h3>
+                <div id="qrcode"></div>
+                <p>微信/浏览器扫码均可作答</p>
+            </div>
+        </div>
+
+        <!-- 答题模式 -->
+        <div id="exam-mode">
+            <div id="exam-question-list"></div>
+            <button class="btn btn-success" onclick="submitExam()">提交答案</button>
+            <div id="result-box" class="result-box">
+                <p>本次得分</p>
+                <div class="result-score" id="result-score">0</div>
+                <p>共 <span id="total-count">0</span> 题，答对 <span id="correct-count">0</span> 题</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局题目数据
+        let questionList = [{stem: "1+1等于几？",options: ["1","2","3","4"],correct: 1}];
+        let examQuestions = [], userAnswers = {};
+
+        // 页面加载自动判断模式
+        window.onload = function() {
+            const hash = window.location.hash.slice(1);
+            if(hash){
+                try{
+                    examQuestions = JSON.parse(atob(decodeURIComponent(hash)));
+                    initExam();
+                }catch(e){
+                    alert("链接无效");
+                    showMaker();
+                }
+            }else{
+                showMaker();
+                renderQuestions();
+            }
+        }
+
+        // 切换模式
+        function showMaker(){document.getElementById("maker-mode").style.display="block";document.getElementById("exam-mode").style.display="none";}
+        function showExam(){document.getElementById("maker-mode").style.display="none";document.getElementById("exam-mode").style.display="block";}
+
+        // ========== 出题功能 ==========
+        function renderQuestions(){
+            const dom = document.getElementById("question-list");
+            dom.innerHTML = questionList.map((q,i)=>`
+                <div class="question-card">
+                    <div class="question-header">
+                        <span>第${i+1}题</span>
+                        <button class="btn btn-danger" onclick="delQ(${i})">删除</button>
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label">题干</label>
+                        <input class="form-input" value="${q.stem}" oninput="questionList[${i}].stem=this.value">
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label">选项</label>
+                        ${q.options.map((opt,j)=>`
+                            <div class="option-item">
+                                <span>${String.fromCharCode(65+j)}.</span>
+                                <input class="form-input" value="${opt}" oninput="questionList[${i}].options[${j}]=this.value">
+                                <button class="btn btn-danger" onclick="delOpt(${i},${j})">删</button>
+                            </div>
+                        `).join('')}
+                        <button class="btn btn-secondary" onclick="addOpt(${i})">+添加选项</button>
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label">正确答案</label>
+                        <div class="radio-group">
+                            ${q.options.map((_,j)=>`
+                                <label class="radio-item">
+                                    <input type="radio" name="c${i}" ${q.correct==j?'checked':''} onchange="questionList[${i}].correct=${j}">
+                                    ${String.fromCharCode(65+j)}
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addQ(){questionList.push({stem:"",options:["","","",""],correct:0});renderQuestions();}
+        function delQ(i){if(questionList.length>1)questionList.splice(i,1);renderQuestions();}
+        function addOpt(i){if(questionList[i].options.length<8)questionList[i].options.push("");renderQuestions();}
+        function delOpt(i,j){if(questionList[i].options.length>2)questionList[i].options.splice(j,1);renderQuestions();}
+
+        // 生成二维码（核心：公网URL+题目数据）
+        function generateQRCode(){
+            // 校验题目
+            for(let q of questionList){if(!q.stem||q.options.some(o=>!o)){alert("题干/选项不能为空");return;}}
+            
+            // 生成答题链接
+            const data = encodeURIComponent(btoa(JSON.stringify(questionList)));
+            const url = window.location.origin + window.location.pathname + '#' + data;
+            
+            // 显示二维码
+            document.getElementById("qrcode-box").style.display="block";
+            QRCode.toCanvas(document.getElementById("qrcode"), url, {width:250});
+        }
+
+        // ========== 答题功能 ==========
+        function initExam(){
+            showExam();
+            const dom = document.getElementById("exam-question-list");
+            dom.innerHTML = examQuestions.map((q,i)=>`
+                <div class="exam-question">
+                    <div>${i+1}. ${q.stem}</div>
+                    ${q.options.map((opt,j)=>`
+                        <div class="exam-option" id="q${i}o${j}" onclick="choose(${i},${j})">
+                            ${String.fromCharCode(65+j)}. ${opt}
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('');
+        }
+
+        function choose(i,j){
+            document.querySelectorAll(`#q${i}o\\d+`).forEach(o=>o.classList.remove("selected"));
+            document.getElementById(`q${i}o${j}`).classList.add("selected");
+            userAnswers[i]=j;
+        }
+
+        function submitExam(){
+            if(Object.keys(userAnswers).length!==examQuestions.length){alert("请完成所有题目");return;}
+            
+            let correct=0;
+            examQuestions.forEach((q,i)=>{
+                if(userAnswers[i]===q.correct)correct++;
+                document.getElementById(`q${i}o${q.correct}`).classList.add("correct");
+                if(userAnswers[i]!==q.correct)document.getElementById(`q${i}o${userAnswers[i]}`).classList.add("wrong");
+            });
+
+            // 显示结果
+            document.getElementById("result-score").innerText=Math.round(correct/examQuestions.length*100);
+            document.getElementById("total-count").innerText=examQuestions.length;
+            document.getElementById("correct-count").innerText=correct;
+            document.getElementById("result-box").style.display="block";
+        }
+    </script>
+</body>
+</html>
